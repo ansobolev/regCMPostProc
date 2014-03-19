@@ -73,6 +73,7 @@ class Value(object):
 
     def mean(self):
         self.data = np.mean(self.data, axis=0)
+        return self
 
     def __sub__(self, other):
         assert self.data.shape == other.data.shape
