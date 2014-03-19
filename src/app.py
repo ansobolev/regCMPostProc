@@ -24,7 +24,7 @@ if __name__ == "__main__":
     obs_value = r.get_value(obs_nc_var, limits = limits)
 
     value.regrid(obs_value.grid)
-    diff = obs_value - value
+    diff = abs(obs_value - value)
     plt = Plotter()
 
     plt.plot(diff.mean())
