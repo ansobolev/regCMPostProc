@@ -8,7 +8,8 @@ from scipy.interpolate import RectBivariateSpline
 
 class Value(object):
 
-    def __init__(self, data, title, units, dims, dim_names, latlon, limits, latlon_limits):
+    def __init__(self, data=None, title=None, units=None, dims=None, 
+                       dim_names=None, latlon=None, limits=None, latlon_limits=None):
         self.data = data
         self.title = title
         self.units = units
