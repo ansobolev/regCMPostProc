@@ -9,6 +9,56 @@ class Reader(object):
             self._files.append(f)
             self._ds.append(Dataset(f))
 
+    def get_value(self, var_name, imposed_limits=None, latlon_limits=None):
+        # initialize limits dictionary if its not there
+        if imposed_limits is None:
+            imposed_limits = {}
+        # if var_name's dimensions do not include lat and lon, we need to translate latlon_limits to the limits of actual var_name's dimensions
+        if latlon_limits is not None:
+            imposed_limits.update(self._translate_latlon_limits(latlon_limits))
+        else:
+            latlon_limits = self._get_latlon_limits()
+        value = Value()
+        # get data from all the datasets
+        for f, ds in zip(self._files, self._ds):
+            # data variable (we might need to impose the limits on it later on)
+            print 'Reading data from file ' + f
+            data = ds.variables[var_name]
+            limits = {}
+            # dimension names and values
+            dim_names = data.dimensions
+            dims = [ds.variables[name] for name in dim_names]
+            title = getattr(data, 'long_name', None)
+            # units (must be according to standart)
+            units = getattr(data, 'units', None)
+            for idim, (name, dim) in enumerate(zip(dim_names, dims)):
+                dim_data = dim[:]
+                if name in imposed_limits.keys():
+                    # treat time differently
+                    if name == "time":
+                        imposed_limits[name] = date2num(imposed_limits[name], units=dim.units, calendar=getattr(dim, 'calendar', 'gregorian'))
+                    # impose a limit on the dimension
+                    min_dim, max_dim = imposed_limits[name]
+                    dim_idx = np.where((dim_data >= min_dim) & (dim_data <= max_dim))
+                    dim_data = dim_data[dim_idx]
+                    data = data[dim_idx]
+                    limits[name] = imposed_limits[name]
+                else:
+                    data = data[:]
+                    limits[name] = [np.min(dim_data), np.max(dim_data)]
+                # treat time differently
+                if name == 'time':
+                    limits[name] = num2date(limits[name], units=dim.units, calendar=getattr(dim, 'calendar', 'gregorian'))
+                    dims[idim] = num2date(dim_data, units=dim.units, calendar=getattr(dim, 'calendar', 'gregorian'))
+                else:
+                    dims[idim] = dim_data
+                axes_tuple = tuple(range(1, len(dims)) + [0,])
+                data = np.transpose(data, axes_tuple)
+            latlon = self._get_latlon_within_limits(latlon_limits)
+            value_i = Value(data, title, units, dims, dim_names, latlon, limits, latlon_limits)
+            value.update(value_i)
+        return value
+
     def _get_latlon_limits(self):
         latlon_limits = {}
         # in hope that all datasets have the same latitude and longitude points
