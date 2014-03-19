@@ -31,7 +31,7 @@ if __name__ == "__main__":
     crd_limits = value.get_latlonlimits()
 
     obs_r = CRUReader(obs_pattern)
-    obs_value = r.get_value(obs_nc_var, imposed_limits={'time': time_limits}, latlon_limits=crd_limits).mean()
+    obs_value = obs_r.get_value(obs_nc_var, imposed_limits={'time': time_limits}, latlon_limits=crd_limits).mean()
     if obs_nc_var == "TMP":
         obs_value.to_K()
 
