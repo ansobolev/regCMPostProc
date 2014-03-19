@@ -20,7 +20,7 @@ class Reader(object):
 
 
 class RegCMReader(Reader):
-    pass
+    crd_names = {'lat': 'xlat', 'lon': 'xlon'}
 
 class CRUReader(Reader):
-    pass
+    crd_names = {'lat': 'lat', 'lon': 'lon'}
