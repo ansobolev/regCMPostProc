@@ -81,8 +81,6 @@ class Value(object):
     def __abs__(self):
         return Value(np.abs(self.data), self.title, self.units, self.dims, self.dim_names, self.latlon, self.limits, self.latlon_limits)
 
-class Temperature(Value):
-
     def to_C(self):
         self.data -= 273.15
 
