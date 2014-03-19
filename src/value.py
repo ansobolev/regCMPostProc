@@ -26,3 +26,10 @@ class Value(object):
 
     def mean(self):
         self.data = np.mean(self.data, axis=0)
+
+    def __sub__(self, other):
+        assert self.data.shape == other.data.shape
+        return Value(self.data - other.data, self.title, self.units, self.dims, self.dim_names, self.latlon, self.limits, self.latlon_limits)
+
+    def __abs__(self):
+        return Value(np.abs(self.data), self.title, self.units, self.dims, self.dim_names, self.latlon, self.limits, self.latlon_limits)
