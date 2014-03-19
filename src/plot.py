@@ -30,7 +30,7 @@ class Plotter(object):
                         scale='110m', category='cultural', name='populated_places')
             self.ax.add_feature(places, color='b', hatch='o')
 
-        cx = self.ax.contourf(self.lon, self.lat, self._value.data[0], transform=ccrs.PlateCarree(),cmap='spectral')
+        cx = self.ax.contourf(self.lon, self.lat, self._value.data, transform=ccrs.PlateCarree(),cmap='spectral')
 
         # To mask out OCEAN or LAND
         #ax.add_feature(cfeature.OCEAN)
@@ -50,6 +50,9 @@ class Plotter(object):
 
     def save(self, filename, format):
         plt.savefig(filename + '.' + format)
+
+    def close(self):
+        plt.close(self.fig)
 
 
 if __name__ == "__main__":
