@@ -38,6 +38,12 @@ class RegCMReader(Reader):
 class CRUReader(Reader):
     crd_names = {'lat': 'lat', 'lon': 'lon'}
 
+    def _translate_latlon_limits(self, latlon_limits):
+        # in CRU file a variable depends on actual lat and lon
+        for limit in latlon_limits.keys():
+            assert limit in self.crd_names.keys()
+        return latlon_limits
+
     def _get_latlon_within_limits(self, latlon_limits):
         # in hope that all datasets have the same latitude and longitude points
         latlon = []
