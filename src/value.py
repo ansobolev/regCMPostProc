@@ -65,6 +65,23 @@ class Value(object):
             # hope that time goes increasing
             self.limits['time'] = [self.limits['time'][0], value.limits['time'][1]]
 
+    def regrid(self, latlon):
+        # ugly hack
+        data = []
+        if len(self.data.shape) == 2:
+            data_chunks = [self.data, ]
+        else:
+            data_chunks = self.data
+        for data_chunk in data_chunks:
+            lut = RectBivariateSpline(self.latlon[0][:,0], self.latlon[1][0], data_chunk)
+            new_shape = latlon[0].shape
+            data.append(lut.ev(latlon[0].ravel(),latlon[1].ravel()).reshape(new_shape))
+        if len(data) == 1:
+            self.data = data[0]
+        else:
+            self.data = np.array(data)
+        self.latlon = latlon
+
     def get_limits(self, name):
         return self.limits[name]
 
