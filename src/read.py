@@ -22,5 +22,32 @@ class Reader(object):
 class RegCMReader(Reader):
     crd_names = {'lat': 'xlat', 'lon': 'xlon'}
 
+    def _get_latlon_within_limits(self, latlon_limits):
+        # in hope that all datasets have the same latitude and longitude points
+        latlon = []
+        ds = self._ds[0]
+        for crd in ['lat', 'lon']:
+            crd_name = self.crd_names[crd]
+            crd_value = ds.variables[crd_name][:]
+            crd_shape = crd_value.shape
+            min_crd, max_crd = latlon_limits[crd]
+            crd_idx = np.where((crd_value >= min_crd) & (crd_value <= max_crd))
+            latlon.append(crd_value[crd_idx].reshape(crd_shape))
+        return latlon
+
 class CRUReader(Reader):
     crd_names = {'lat': 'lat', 'lon': 'lon'}
+
+    def _get_latlon_within_limits(self, latlon_limits):
+        # in hope that all datasets have the same latitude and longitude points
+        latlon = []
+        ds = self._ds[0]
+        for crd in ['lat', 'lon']:
+            crd_name = self.crd_names[crd]
+            crd_value = ds.variables[crd_name][:]
+            min_crd, max_crd = latlon_limits[crd]
+            crd_idx = np.where((crd_value >= min_crd) & (crd_value <= max_crd))
+            latlon.append(crd_value[crd_idx])
+        lat, lon = np.meshgrid(latlon[0], latlon[1])
+        return [lat.T, lon.T]
+
