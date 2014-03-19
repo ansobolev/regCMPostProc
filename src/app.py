@@ -4,10 +4,21 @@ import sys
 from read import RegCMReader, CRUReader
 from plot import Plotter
 
+usage = """usage: ./app.py 'model_file_pattern' model_nc_variable 'observ_glob_pattern' observ_nc_variable
+
+Parameters:
+'model file pattern': a glob pattern for one or more netCDF files made from RegCM program (in apostrophes)
+model_nc_variable: a variable from the RegCM netCDF files 
+'observ_glob_pattern': a glob pattern for one or more CRU netCDF files (also in apostrophes)
+model_nc_variable: a variable from the CRU netCDF files 
+
+Example: 
+./app.py 'data/Africa_SRF.1970*.nc' t2m 'obs/CRUTMP.CDF' TMP
+"""
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
-        print "usage: ./app.py 'model_file_pattern' model_nc_variable 'observ_glob_pattern' observ_nc_variable"
+        print usage
         sys.exit(1)
     pattern = sys.argv[1]
     nc_var = sys.argv[2]

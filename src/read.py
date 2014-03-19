@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+import glob
+import numpy as np
+from netCDF4 import Dataset, num2date, date2num
+from value import Value
+from plot import Plotter
+
 class Reader(object):
 
     def __init__(self, pattern):
